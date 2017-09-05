@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">test1</string>
     <string name="hello2">Hello 2!</string>
+    <string name="register_new_account">Register New Account</string>
+    <string name="create_account">Create Account</string>
+    <string name="display_name">Display Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>
