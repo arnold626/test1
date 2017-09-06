@@ -10,17 +10,33 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:text="Welcome !!"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="66dp" />
 
     <Button
         android:id="@+id/start_reg_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="153dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/register_new_account"
+        android:textSize="18sp"
+        android:layout_below="@+id/start_signin_btn"
+        android:layout_alignRight="@+id/start_signin_btn" />
+
+    <Button
+        android:id="@+id/start_signin_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Already Have Account"
+        android:textSize="18sp"
         android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="@string/register_new_account" />
+        android:layout_marginTop="69dp" />
 </RelativeLayout>

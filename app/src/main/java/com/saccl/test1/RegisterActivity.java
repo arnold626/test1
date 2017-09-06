@@ -1,10 +1,13 @@
 package com.saccl.test1;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,12 +30,28 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private Toolbar mToolbar;
+
+    // ProgressDialog
+    private ProgressDialog mRegProgressDialog;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
+
+        mToolbar = (Toolbar) findViewById(R.id.register_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(R.string.create_account);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mRegProgressDialog = new ProgressDialog(this);
+
+
 
         mDisplayName = (TextInputLayout) findViewById(R.id.reg_display_name);
         mEmail = (TextInputLayout) findViewById(R.id.reg_email);
@@ -46,7 +65,17 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = mEmail.getEditText().getText().toString();
                 String password = mPassword.getEditText().getText().toString();
 
-                register_user(display_name, email, password);
+                if(!(TextUtils.isEmpty(display_name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password))) {
+
+                    mRegProgressDialog.setTitle("Registering User");
+                    mRegProgressDialog.setMessage("Please wait while we create your account");
+                    mRegProgressDialog.setCanceledOnTouchOutside(false);
+                    mRegProgressDialog.show();
+
+                    register_user(display_name, email, password);
+
+                }
+
             }
         });
 
@@ -66,12 +95,17 @@ public class RegisterActivity extends AppCompatActivity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (task.isSuccessful()) {
+                            mRegProgressDialog.dismiss();
+
                             Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(mainIntent);
                             finish();
 
                         } else {
-                            Toast.makeText(RegisterActivity.this, "You got some error.",
+
+                            mRegProgressDialog.hide();
+
+                            Toast.makeText(RegisterActivity.this, "Cannot sign in. Please check the form and try again.",
                                     Toast.LENGTH_LONG).show();
                         }
 

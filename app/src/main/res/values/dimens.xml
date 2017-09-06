@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?><!-- default no this dimens.xml file
+    https://stackoverflow.com/questions/42667599/there-is-no-dimens-xml-in-android-studio-project
+    create new one
+    -->
+<resources>
+    <!-- to suppress the render problem error
+        https://stackoverflow.com/questions/41253016/rendering-problems-id-visible-android-studio
+        -->
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+</resources>
