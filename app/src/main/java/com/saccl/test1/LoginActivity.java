@@ -166,8 +166,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
+
+            // added by Arnold for firebase authentication
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            //Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                            showProgress(false);
+
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                //Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                Toast.makeText(LoginActivity.this, R.string.auth_failed,
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(mainIntent);
+                                finish();
+                            }
+                        }
+                    });
         }
     }
 
@@ -283,30 +308,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
-
-            // added by Arnold for firebase authentication
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                            // If sign in fails, display a message to the user. If sign in succeeds
-                            // the auth state listener will be notified and logic to handle the
-                            // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
-                                Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                Toast.makeText(LoginActivity.this, R.string.auth_failed,
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(mainIntent);
-                                finish();
-                            }
-
-                        }
-                    });
-
         }
 
         @Override
