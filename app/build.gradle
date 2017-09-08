@@ -10,6 +10,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // https://stackoverflow.com/questions/32807587/com-android-build-transform-api-transformexception
+        // For Error:Execution failed for task ':app:transformClassesWithDexForDebug'.
+        // First try Clean Project (Build > Clean Project), if doesn't work, then uncomment the line below
+        // multiDexEnabled true
     }
     buildTypes {
         release {
@@ -27,25 +32,41 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    // https://github.com/hdodenhof/CircleImageView
+    // compile 'de.hdodenhof:circleimageview:2.1.0'
+
+    // https://github.com/ArthurHub/Android-Image-Cropper
+    // compile 'com.theartofdev.edmodo:android-image-cropper:2.4.+'
+
+    // http://square.github.io/picasso/
+    // compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // https://github.com/firebase/FirebaseUI-Android
+    // FirebaseUI Database only
+    //compile 'com.firebaseui:firebase-ui-database:1.1.1'
+    // FirebaseUI Auth only
+    //compile 'com.firebaseui:firebase-ui-auth:1.1.1'
+    // FirebaseUI Storage only
+    //compile 'com.firebaseui:firebase-ui-storage:1.1.1'
+    // Single target that includes all FirebaseUI libraries above
+    //compile 'com.firebaseui:firebase-ui:1.1.1'
+
+    // https://github.com/zetbaitsu/Compressor
+    // compile 'id.zelory:compressor:2.1.0'
+
+
+    compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.firebase:firebase-auth:10.0.1'
-    compile 'com.android.support:support-v4:26.+'
     compile 'com.google.firebase:firebase-database:10.0.1'
-    testCompile 'junit:junit:4.12'
-
     compile 'com.google.firebase:firebase-storage:10.0.1'
-
-
-    // https://github.com/hdodenhof/CircleImageView
     compile 'de.hdodenhof:circleimageview:2.1.0'
-
-    // https://github.com/ArthurHub/Android-Image-Cropper
-    //compile 'com.theartofdev.edmodo:android-image-cropper:2.4.+'
-
-    // http://square.github.io/picasso/
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.firebaseui:firebase-ui-database:1.1.1'
+    compile 'id.zelory:compressor:2.1.0'
+    testCompile 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'

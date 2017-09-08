@@ -2,10 +2,14 @@ package com.saccl.test1;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,9 +29,22 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
+
+import static android.R.attr.bitmap;
+import static android.R.attr.settingsActivity;
 
 public class SettingsActivity extends AppCompatActivity {
+
+
+    // for log
+    private static final String TAG = "SettingsActivity";
 
     private DatabaseReference mUserDatabase;
     private FirebaseUser mCurrentUser;
@@ -105,8 +122,10 @@ public class SettingsActivity extends AppCompatActivity {
                 mName.setText(name);
                 mStatus.setText(status);
 
-                // http://square.github.io/picasso/
-                Picasso.with(SettingsActivity.this).load(image).into(mDisplayImage);
+                if(!image.equals("default")) {
+                    // http://square.github.io/picasso/
+                    Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avator).into(mDisplayImage);
+                }
             }
 
             @Override
@@ -126,30 +145,71 @@ public class SettingsActivity extends AppCompatActivity {
             //String imageUrl = data.getDataString();
             mProgressDialog = new ProgressDialog(SettingsActivity.this);
             mProgressDialog.setTitle("Uploading image");
-            mProgressDialog.setMessage("Please wait while the iamge is uploading.");
+            mProgressDialog.setMessage("Please wait while the image is uploading.");
             mProgressDialog.setCanceledOnTouchOutside(false);
             mProgressDialog.show();
 
             Uri imageUri = data.getData();
+            File thumb_filePath = new File(getRealPathFromURI(imageUri));
+
+
+            Bitmap thumb_bitmap;
+            // use try/catch because it complained!
+            try {
+                thumb_bitmap = new Compressor(this)
+                    .setMaxWidth(200)
+                    .setMaxHeight(200)
+                    .setQuality(50)
+                    .compressToBitmap(thumb_filePath);
+            } catch (Exception e) {
+                Log.d(TAG, e.toString());
+                // create a dummy bitmap
+                thumb_bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            final byte[] thumb_byte = baos.toByteArray();
+
 
             StorageReference filepath = mImageStorage.child("profile_images").child(mCurrentUid);
+            final StorageReference thumb_filepath = mImageStorage.child("profile_images").child("thumbs").child(mCurrentUid + ".jpg");
+
             filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+
+                    final String download_url = task.getResult().getDownloadUrl().toString();
+
                     if(task.isSuccessful()){
-                        String download_url = task.getResult().getDownloadUrl().toString();
-                        mUserDatabase.child("image").setValue(download_url).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        final UploadTask uploadTask = thumb_filepath.putBytes(thumb_byte);
+                        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> thumb_task) {
+                                String thumb_download_url = thumb_task.getResult().getDownloadUrl().toString();
+                                Map update_hashMap = new HashMap();
+                                update_hashMap.put("image", download_url);
+                                update_hashMap.put("thumb_image", thumb_download_url);
+
+                                if(thumb_task.isSuccessful()) {
+
+                                    mUserDatabase.updateChildren(update_hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> thumb_task) {
+                                            if(thumb_task.isSuccessful()){
+                                                mProgressDialog.dismiss();
+                                                Toast.makeText(SettingsActivity.this, "Success Uploading", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+
+                                } else {
+                                    Toast.makeText(SettingsActivity.this, "Error in uploading thumbnail", Toast.LENGTH_LONG).show();
                                     mProgressDialog.dismiss();
-                                    Toast.makeText(SettingsActivity.this, "Success Uploading", Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
 
-
-                        Toast.makeText(SettingsActivity.this, "Working", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(SettingsActivity.this, "Error in uploading", Toast.LENGTH_LONG).show();
                         mProgressDialog.dismiss();
@@ -157,11 +217,14 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
-
-
-
-            //Toast.makeText(SettingsActivity.this, imageUrl, Toast.LENGTH_LONG).show();
-
         }
+    }
+
+    // https://stackoverflow.com/questions/20327213/getting-path-of-captured-image-in-android-using-camera-intent
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 }

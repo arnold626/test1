@@ -3,6 +3,14 @@
 buildscript {
     repositories {
         jcenter()
+
+        /*
+        //https://stackoverflow.com/questions/44505204/compile-project-dependencies-with-latest-version-of-android-support-library
+        // solve failed to resolve com.android.support.appcompat-v7:26.0.2
+        maven {
+            url "https://maven.google.com"
+        }
+        */
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'

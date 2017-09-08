@@ -114,7 +114,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(settingsIntent);
                 // finish();
                 break;
-
+            case R.id.main_all_users_btn:
+                Intent UsersIntent = new Intent(MainActivity.this, UsersActivity.class );
+                startActivity(UsersIntent);
+                // finish();
+                break;
 
         }
 
