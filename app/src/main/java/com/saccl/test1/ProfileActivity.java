@@ -35,6 +35,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private DatabaseReference mUserDatabase;
     private DatabaseReference mFriendRequestDatabase;
+    private DatabaseReference mFriendDatabase;
+
 
     private FirebaseUser mCurrentUser;
     private String mCurrentUid;
@@ -72,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
         mFriendRequestDatabase = FirebaseDatabase.getInstance().getReference().child("FriendRequest");
+        mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
 
         mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -131,7 +134,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 mFriendRequestDatabase.child(user_id).child(mCurrentUid).child("request_type").setValue("received").addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        mProfileSendRequestBtn.setEnabled(true);
                                         mCurrent_status = "req_sent";
                                         mProfileSendRequestBtn.setText("CANCEL FRIEND REQUEST");
 
@@ -142,6 +144,9 @@ public class ProfileActivity extends AppCompatActivity {
                             } else {
                                 Toast.makeText(ProfileActivity.this, "Sent Request failed!", Toast.LENGTH_LONG).show();
                             }
+
+                            mProfileSendRequestBtn.setEnabled(true);
+
                         }
                     });
                 }
@@ -161,6 +166,32 @@ public class ProfileActivity extends AppCompatActivity {
                                     Toast.makeText(ProfileActivity.this, "Request Removed!", Toast.LENGTH_LONG).show();
                                 }
                             });
+                        }
+                    });
+                }
+
+                // ------- REQUEST SENT -------
+                if(mCurrent_status.equals("req_received")) {
+                    mFriendRequestDatabase.child(mCurrentUid).child(user_id).child("request_type").setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                mFriendRequestDatabase.child(user_id).child(mCurrentUid).child("request_type").setValue("received").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        mCurrent_status = "req_sent";
+                                        mProfileSendRequestBtn.setText("CANCEL FRIEND REQUEST");
+
+                                        // Toast.makeText(ProfileActivity.this, "Request Sent!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+                            } else {
+                                Toast.makeText(ProfileActivity.this, "Sent Request failed!", Toast.LENGTH_LONG).show();
+                            }
+
+                            mProfileSendRequestBtn.setEnabled(true);
+
                         }
                     });
                 }
