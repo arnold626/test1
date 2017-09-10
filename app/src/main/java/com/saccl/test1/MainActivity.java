@@ -15,6 +15,8 @@ import android.view.ViewParent;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private TabLayout mTabLayout;
+
+    private DatabaseReference mUserDatabase;
 
 
 
@@ -58,11 +62,12 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    //Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
+                    mUserDatabase.child("online").setValue(true);
+
 
                 } else {
                     // User is signed out
-                    //Log.d(TAG, "onAuthStateChanged:signed_out");
                     sendToStart();
                 }
             }
@@ -87,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null) {
+            mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+            mUserDatabase.child("online").setValue(false);
+        }
     }
 
     @Override
@@ -106,6 +116,12 @@ public class MainActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.main_logout_btn:
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if(currentUser != null) {
+                    mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+                    mUserDatabase.child("online").setValue(false);
+                }
+
                 FirebaseAuth.getInstance().signOut();
                 sendToStart();
                 break;

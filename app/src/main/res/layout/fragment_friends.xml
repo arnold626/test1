@@ -5,10 +5,10 @@
     tools:context="com.saccl.test1.FriendsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/textView"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/friends_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Friends Page" />
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
 </FrameLayout>

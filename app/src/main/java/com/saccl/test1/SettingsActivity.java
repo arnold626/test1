@@ -27,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -109,13 +111,14 @@ public class SettingsActivity extends AppCompatActivity {
         mCurrentUid = mCurrentUser.getUid();
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUid);
+        mUserDatabase.keepSynced(true);
 
         mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Toast.makeText(SettingsActivity.this, dataSnapshot.toString(), Toast.LENGTH_LONG).show();
                 String name = dataSnapshot.child("name").getValue().toString();
-                String image = dataSnapshot.child("image").getValue().toString();
+                final String image = dataSnapshot.child("image").getValue().toString();
                 String status = dataSnapshot.child("status").getValue().toString();
                 String thumb_image = dataSnapshot.child("thumb_image").getValue().toString();
 
@@ -124,7 +127,21 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if(!image.equals("default")) {
                     // http://square.github.io/picasso/
-                    Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avator).into(mDisplayImage);
+                    //Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avator).into(mDisplayImage);
+
+                    Picasso.with(SettingsActivity.this).load(image).networkPolicy(NetworkPolicy.OFFLINE)
+                            .placeholder(R.drawable.default_avator).into(mDisplayImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+                            Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.default_avator).into(mDisplayImage);
+                        }
+                    });
+
                 }
             }
 

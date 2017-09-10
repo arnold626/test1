@@ -35,6 +35,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +72,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private DatabaseReference mUserDatabase;
+
     // https://stackoverflow.com/questions/8355632/how-do-you-usually-tag-log-entries-android
     private final String TAG = this.getClass().getSimpleName();
 
@@ -84,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // added by Arnold for firebase
         mAuth = FirebaseAuth.getInstance();
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
         // Set up the login form.
@@ -181,15 +187,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             // If sign in fails, display a message to the user. If sign in succeeds
                             // the auth state listener will be notified and logic to handle the
                             // signed in user can be handled in the listener.
-                            if (!task.isSuccessful()) {
-                                //Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                Toast.makeText(LoginActivity.this, R.string.auth_failed,
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
+                            if (task.isSuccessful()) {
+                                String currentUid = mAuth.getCurrentUser().getUid();
+                                String deviceTokenId = FirebaseInstanceId.getInstance().getToken();
+
+                                mUserDatabase.child(currentUid).child("deviceToken").setValue(deviceTokenId).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()) {
+
+                                        }else {
+
+                                        }
+                                    }
+                                });
+
                                 Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                 mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(mainIntent);
                                 finish();
+                            } else {
+                                //Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                Toast.makeText(LoginActivity.this, R.string.auth_failed,
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

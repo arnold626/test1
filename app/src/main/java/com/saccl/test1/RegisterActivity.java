@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.w3c.dom.Text;
 
@@ -38,6 +39,8 @@ public class RegisterActivity extends AppCompatActivity {
     private Toolbar mToolbar;
 
     private DatabaseReference mDatabase;
+    private DatabaseReference mUserDatabase;
+
 
 
     // ProgressDialog
@@ -56,6 +59,8 @@ public class RegisterActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(R.string.create_account);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mRegProgressDialog = new ProgressDialog(this);
 
@@ -104,12 +109,15 @@ public class RegisterActivity extends AppCompatActivity {
                                 String uid = current_user.getUid();
                             //}
 
+                            String deviceTokenId = FirebaseInstanceId.getInstance().getToken();
+
                             mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
                             HashMap<String, String> userMap = new HashMap<>();
                             userMap.put("name", display_name);
                             userMap.put("status", "default status");
                             userMap.put("image", "default");
                             userMap.put("thumb_image", "default");
+                            userMap.put("deviceToken", deviceTokenId);
 
                             mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

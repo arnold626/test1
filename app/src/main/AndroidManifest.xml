@@ -20,7 +20,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
-        tools:replace="android:supportsRtl">
+        tools:replace="android:supportsRtl"
+        android:name=".test1">
+
+
+        <!-- Arnold added Cloud Messaging in firebase -->
+        <service
+            android:name=".FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
         <!-- Arnold added tools:replace="android:supportsRtl" because there was error after adding compile 'com.iceteck.silicompressorr:silicompressor:2.0' in app's gradle -->
         <activity
@@ -57,7 +67,12 @@
         <activity
             android:name=".UsersActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileActivity">
+            <intent-filter>
+                <action android:name="com.saccl.test1_TARGET_NOTIFICATION"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
