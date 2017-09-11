@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UsersActivity extends AppCompatActivity {
@@ -31,15 +34,18 @@ public class UsersActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
     private String mCurrentUid;
     private String mCurrentUserName;
-
+    private ArrayList<Users> mUsersArray = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
+        // https://www.youtube.com/watch?v=j9_hcfWVkIc
         mToolbar = (Toolbar) findViewById(R.id.users_appBar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("List Users");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mCurrentUid = mCurrentUser.getUid();
@@ -58,8 +64,6 @@ public class UsersActivity extends AppCompatActivity {
 
             }
         });
-        getSupportActionBar().setTitle("List Users");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mUsersList = (RecyclerView) findViewById(R.id.users_list);
         mUsersList.setHasFixedSize(true);
@@ -102,6 +106,12 @@ public class UsersActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+           getMenuInflater().inflate(R.menu.users_menu, menu);
+        return true;
+    }
 
     public static class UsersViewHolder extends RecyclerView.ViewHolder {
         View mView;

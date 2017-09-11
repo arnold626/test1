@@ -44,4 +44,13 @@
         android:visibility="invisible"
         app:srcCompat="@android:drawable/presence_online" />
 
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/user_single_online_icon"
+        android:layout_marginLeft="54dp"
+        android:layout_toRightOf="@+id/user_single_online_icon"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
 </RelativeLayout>

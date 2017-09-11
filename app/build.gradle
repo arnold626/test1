@@ -14,7 +14,9 @@ android {
         // https://stackoverflow.com/questions/32807587/com-android-build-transform-api-transformexception
         // For Error:Execution failed for task ':app:transformClassesWithDexForDebug'.
         // First try Clean Project (Build > Clean Project), if doesn't work, then uncomment the line below
-        // multiDexEnabled true
+
+        // For QR code
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -69,6 +71,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.firebaseui:firebase-ui-database:1.1.1'
     compile 'id.zelory:compressor:2.1.0'
+    compile 'com.google.android.gms:play-services:10.0.1'
     testCompile 'junit:junit:4.12'
 }
 
