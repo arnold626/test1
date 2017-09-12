@@ -11,6 +11,12 @@
         android:id="@+id/main_all_users_btn"
         android:title="All Users" />
     <item
+        android:id="@+id/mainMenu_fitnessUsers_btn"
+        android:title="Fitness Users" />
+    <item
+        android:id="@+id/mainMenu_demo_btn"
+        android:title="Demo" />
+    <item
         android:id="@+id/main_logout_btn"
         android:title="@string/log_out" />
 </menu>

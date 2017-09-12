@@ -13,7 +13,6 @@
         android:id="@+id/usersMenu_camera"
         android:title="Search"
         android:icon="@android:drawable/ic_menu_camera"
-        app:actionViewClass=".StartActivity"
         app:showAsAction="always|collapseActionView" />
 
 </menu>

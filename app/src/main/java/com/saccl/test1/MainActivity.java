@@ -135,6 +135,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(UsersIntent);
                 // finish();
                 break;
+            case R.id.mainMenu_demo_btn:
+                Intent DemoIntent = new Intent(MainActivity.this, DemoActivity.class );
+                startActivity(DemoIntent);
+                // finish();
+                break;
+            case R.id.mainMenu_fitnessUsers_btn:
+                Intent FitnessUsersIntent = new Intent(MainActivity.this, UsersActivity.class );
+                startActivity(FitnessUsersIntent);
+                // finish();
+                break;
 
         }
 
