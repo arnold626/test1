@@ -114,6 +114,19 @@ public class UsersActivity extends AppCompatActivity {
         return true;
     }
 
+    // https://stackoverflow.com/questions/30398247/how-to-filter-a-recyclerview-with-a-searchview
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        // Here is where we are going to implement the filter logic
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
     public static class UsersViewHolder extends RecyclerView.ViewHolder {
         View mView;
 
